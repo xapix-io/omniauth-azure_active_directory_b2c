@@ -69,7 +69,7 @@ This strategy accepts the following options:
 Option | Required | Description |
 ------ | -------- | ----------- |
 `:name` | Optional | Sets the provider name used in the request and callback URLs.  Defaults to `'azure_active_directory_b2c'`.
-`:redirect_uri` | Required | The absolute url sent to the Azure AD B2C policy to initiate the callback phase.
+`:redirect_uri` | Optional | The absolute url sent to the Azure AD B2C policy to initiate the callback phase.
 `:policy_options` | Required | A hash used to initialize an `OmniAuth::Strategies::AzureActiveDirectoryB2C::Policy object`.
 
 Additional info for each option will follow.
@@ -79,19 +79,17 @@ This is a complete example:
 ```ruby
 use OmniAuth::Builder do
   provider :azure_active_directory_b2c, {
-    redirect_uri: ->(strategy) { 'http://localhost:9292/auth/%s/callback' % strategy.optionsname },
     policy_options: {
       application_identifier: '00000000-0000-0000-0000-000000000000',
       application_secret: '****************',
       tenant_name: 'example.onmicrosoft.com',
       policy_name: 'b2c_1_signupin',
       scope: [
-          :openid,
-          'https://example.onmicrosoft.com/example-api/user_impersonation',
-          'https://example.onmicrosoft.com/example-api/read',
-          'https://example.onmicrosoft.com/example-api/write',
-        ],
-      jwk_signing_keys: { 'keys' => [{ 'kid' => '...', 'n' => '...' }]},
+        :openid,
+        'https://example.onmicrosoft.com/example-api/user_impersonation',
+        'https://example.onmicrosoft.com/example-api/read',
+        'https://example.onmicrosoft.com/example-api/write',
+      ]
     }
   }
 end
@@ -136,12 +134,11 @@ You must ensure that `redirect_uri` is registered with the Application in the Az
 These options provide the configuation for the Azure AD B2C Tenant, Application, and Policy being used as the Identity Provider.
 
 A hash can be passed to `policy_options` specifying the following:
-- `:application_identifier`
-- `:application_secret`
+- `:application_identifier`: Required
+- `:application_secret`: Optional
 - `:tenant_name`: This is the Domain Name or Resource name found in the Overview blade in the Azure AD B2C portal.
 - `:policy_name`: The name of the policy that the user should be redirected to and authenticated against
 - `:scope`: Defaults to `[:openid]`, but can be overriden to request specific api permissions.  Eg. `[:openid, 'https://example.onmicrosoft.com/example-api/user_impersonation']`.  See the microsoft docs form more info: [here][ms_scopes] and [here][ms_oauth_code].
-- `:jwk_signing_keys`: This is required to decode the `id_token` returned from the `token` endpoint.  The key can be found by going to the url that is specified in `jwks_uri` parameter at the policy's `.well-known/openid-configuration` page.  Eg: `https://login.microsoftonline.com/te/example.onmicrosoft.com/b2c_1_signupin/discovery/v2.0/keys`.
 
 # Advanced configuration
 

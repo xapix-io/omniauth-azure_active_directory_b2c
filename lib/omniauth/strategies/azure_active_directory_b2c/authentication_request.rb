@@ -5,6 +5,7 @@ module OmniAuth
 
         class ResponseType
           # TODO: provide constants for each option
+          ID_TOKEN = 'id_token'
           CODE = 'code'
         end
 
@@ -30,12 +31,13 @@ module OmniAuth
         end
 
         def response_type
-          ResponseType::CODE
+          [ResponseType::ID_TOKEN, ResponseType::CODE].join(' ')
         end
 
         def default_authorization_uri_options
           {
             response_type: response_type,
+            response_mode: 'form_post',
             scope: policy.scope,
             state: state,
             nonce: nonce,

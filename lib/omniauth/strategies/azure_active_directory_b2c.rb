@@ -59,7 +59,7 @@ module OmniAuth
       end
 
       def redirect_uri
-        @redirect_uri ||= options.redirect_uri.evaluate(self) || (raise MissingOptionError, '`redirect_uri` not defined')
+        @redirect_uri ||= options.redirect_uri.evaluate(self) || callback_url
       end
 
       def setup_phase
@@ -94,7 +94,7 @@ module OmniAuth
       #########################################
 
       def authentication_response
-        @authentication_response ||= AuthenticationResponse.new(policy, request.params['code'])
+        @authentication_response ||= AuthenticationResponse.new(policy, request.params['code'], request.params['id_token'])
       end
 
       def callback_phase

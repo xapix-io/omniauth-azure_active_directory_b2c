@@ -11,27 +11,14 @@ module OmniAuth
 
         attr_reader :policy, :client, :code
 
-        def initialize(policy, code, **override_options)
+        def initialize(policy, code, encrypted_id_token)
           @policy = policy
-          @client = policy.initialize_client({ redirect_uri: nil, **override_options })
-          @client.authorization_code = code
           @code = code
-        end
-
-        def access_token
-          @access_token ||= get_access_token!
+          @encrypted_id_token = encrypted_id_token
         end
 
         def id_token
           @id_token ||= get_id_token!
-        end
-
-        def refresh_token
-          access_token.refresh_token
-        end
-
-        def expires_in
-          access_token.expires_in
         end
 
         def subject_id
@@ -41,7 +28,7 @@ module OmniAuth
         def user_info
           {
             name: id_token.raw_attributes['name'],
-            email: ([*id_token.raw_attributes['emails']].first),
+            email: (id_token.raw_attributes['email']),
             nickname: id_token.raw_attributes['preferred_username'],
             first_name: id_token.raw_attributes['given_name'],
             last_name: id_token.raw_attributes['family_name'],
@@ -66,29 +53,13 @@ module OmniAuth
 
         def credentials
           {
-            id_token: id_token,
-            token: access_token.access_token,
-            refresh_token: refresh_token,
-            expires_in: expires_in,
-            scope: scope,
+            code: code,
+            scope: scope
           }
-        end
-
-        def default_access_token_options
-          {
-            scope: scope,
-            client_auth_method: authentication_method,
-          }
-        end
-
-        def get_access_token!
-          client.access_token!(default_access_token_options)
         end
 
         def get_id_token!
-          # TODO: if the id_token is not passed back, we could get the id token from the userinfo endpoint (or fail if no endpoint is defined?)
-          encrypted_id_token = access_token.id_token
-          decoded_id_token = decode_id_token!(encrypted_id_token)
+          decoded_id_token = decode_id_token!(@encrypted_id_token)
         end
 
         def decode_id_token!(id_token)

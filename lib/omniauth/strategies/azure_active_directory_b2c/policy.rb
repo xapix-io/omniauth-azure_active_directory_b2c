@@ -45,7 +45,7 @@ module OmniAuth
         private
 
         def fetch_openid_config
-          cfg_url = "https://login.windows.net/#{tenant_name}/.well-known/openid-configuration"
+          cfg_url = "https://login.microsoftonline.com/#{tenant_name}/.well-known/openid-configuration"
           cfg_url += "?p=#{policy_name}" if policy_name
           config = JSON.parse(Net::HTTP.get(URI(cfg_url)))
           raise StandardError, "error fetching config: #{config['error_description']}" if config['error'].present?

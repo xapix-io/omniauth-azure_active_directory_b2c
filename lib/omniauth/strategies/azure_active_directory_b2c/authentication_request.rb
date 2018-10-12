@@ -31,7 +31,7 @@ module OmniAuth
         end
 
         def response_type
-          [ResponseType::ID_TOKEN, ResponseType::CODE].join(' ')
+          [ResponseType::CODE, ResponseType::ID_TOKEN].join(' ')
         end
 
         def default_authorization_uri_options

@@ -20,12 +20,8 @@ module OmniAuth
           raise MissingOptionError, '`application_identifier` not defined'
         end
 
-        def policy_application_secret
-          raise MissingOptionError, '`application_secret` not defined'
-        end
-
         def policy_issuer
-          raise MissingOptionError, '`issuer` not defined'
+          raise MissingOptionError, '`issuer` not found in config'
         end
 
         def policy_tenant_name
@@ -36,20 +32,16 @@ module OmniAuth
           raise MissingOptionError, '`policy_name` not defined'
         end
 
-        def policy_host_name
-          'https://login.microsoftonline.com/te/%s/%s' % [tenant_name, policy_name]
-        end
-
         def policy_authorization_endpoint
-          '%s/oauth2/v2.0/authorize' % host_name
+          raise MissingOptionError, '`authorization_endpoint` not found in config'
         end
 
         def policy_token_endpoint
-          '%s/oauth2/v2.0/token' % host_name
+          raise MissingOptionError, '`token_endpoint` not found in config'
         end
 
         def policy_jwks_uri
-          '%s/discovery/v2.0/keys' % host_name
+          raise MissingOptionError, '`jwks_uri` not found in config'
         end
 
         def policy_jwk_signing_algorithm
